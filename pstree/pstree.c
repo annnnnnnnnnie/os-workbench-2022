@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-static void print_help_info();
+static void print_version_info();
 
 int main(int argc, char *argv[]) {
   for (int i = 0; i < argc; i++) {
