@@ -19,7 +19,13 @@ int main(int argc, char *argv[]) {
 
   bool should_show_pids = false;
   bool should_sort_numerically = false;
-  for (int i = 0; i < argc; i++) {
+
+  if (argc <= 1) {
+    int result = print_pstree(should_show_pids, should_sort_numerically);
+    return result;
+  }
+  
+  for (int i = 1; i < argc; i++) {
     assert(argv[i]);
 
     if (matched("-p", "--show-pids", argv[i])) {
@@ -38,7 +44,7 @@ int main(int argc, char *argv[]) {
       return EXIT_FAILURE;
     }
   }
-  
+
   assert(!argv[argc]);
 
   int result = print_pstree(should_show_pids, should_sort_numerically);
