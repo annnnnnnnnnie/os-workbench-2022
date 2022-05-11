@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     } else {
       char bad_option[500];
       strncpy(bad_option, argv[i], sizeof(bad_option));
-      fprintf(stderr, "pstree: invalid option %s", bad_option);
+      fprintf(stderr, "pstree: invalid option %s\n", bad_option);
       print_help_text();
       return EXIT_FAILURE;
     }
@@ -53,14 +53,14 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
 // Prints version info to stderr
 static void print_version_info() {
   char *VERSION_TEXT = "pstree\n"
-                       "Copyleft (C) 0000-0000\n";
-  fprintf(stderr, "%s", VERSION_TEXT);
+                       "Copyleft (C) 0000-0000";
+  fprintf(stderr, "%s\n", VERSION_TEXT);
 }
 
 // Prints help text to stderr
 static void print_help_text(){
   char *HELP_TEXT = "Usage: pstree [-p | --show-pids] [-n | --numeric-sort] [-V | --version]";
-  fprintf(stderr, "%s", HELP_TEXT);
+  fprintf(stderr, "%s\n", HELP_TEXT);
 }
 
 static void test_matched_ok() {
