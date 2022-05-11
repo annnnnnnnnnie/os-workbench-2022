@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
+static void print_pstree(bool should_show_pids, bool should_sort_numerically);
 static void print_version_info();
 static void run_tests();
 
@@ -13,27 +14,34 @@ bool matched(const char *s1, const char *s2, const char *input) {
 
 int main(int argc, char *argv[]) {
   run_tests();
+  bool should_show_pids = false;
+  bool should_sort_numerically = false;
   for (int i = 0; i < argc; i++) {
-    // If -V or --version is set, print version info to stderr and exit
     assert(argv[i]);
-    if (matched("-p", "--show-pids", argv[i])) {
 
+    if (matched("-p", "--show-pids", argv[i])) {
+      should_show_pids = true;
     }
 
     if (matched("-n", "--numeric-sort", argv[i])) {
-
+      should_sort_numerically = true;
     }
 
+    // If -V or --version is set, print version info to stderr and exit
     if (matched("-V", "--version", argv[i])) {
       print_version_info();
     }
 
+    print_pstree(should_show_pids, should_sort_numerically);
 
-    printf("argv[%d] = %s\n", i, argv[i]);
   }
   assert(!argv[argc]);
 
   return 0;
+}
+
+static void print_pstree(bool should_show_pids, bool should_sort_numerically) {
+  printf("[Debug] printing pstree with arg %d %d\n", should_show_pids, should_sort_numerically);
 }
 
 static void print_version_info() {
