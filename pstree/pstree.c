@@ -30,6 +30,7 @@ int main(int argc, char *argv[]) {
     // If -V or --version is set, print version info to stderr and exit
     if (matched("-V", "--version", argv[i])) {
       print_version_info();
+      return 0;
     }
 
     print_pstree(should_show_pids, should_sort_numerically);
@@ -44,6 +45,7 @@ static void print_pstree(bool should_show_pids, bool should_sort_numerically) {
   printf("[Debug] printing pstree with arg %d %d\n", should_show_pids, should_sort_numerically);
 }
 
+// Prints version info to stderr
 static void print_version_info() {
   char *VERSION_TEXT = "pstree\n"
                        "Copyleft (C) 0000-0000\n";
