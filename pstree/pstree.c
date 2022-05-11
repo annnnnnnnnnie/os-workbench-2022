@@ -2,9 +2,11 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 static int print_pstree(bool should_show_pids, bool should_sort_numerically);
 static void print_version_info();
+static void print_help_text();
 static void run_tests();
 
 bool matched(const char *s1, const char *s2, const char *input) {
@@ -21,29 +23,30 @@ int main(int argc, char *argv[]) {
 
     if (matched("-p", "--show-pids", argv[i])) {
       should_show_pids = true;
-    }
-
-    if (matched("-n", "--numeric-sort", argv[i])) {
+    } else if (matched("-n", "--numeric-sort", argv[i])) {
       should_sort_numerically = true;
-    }
-
-    // If -V or --version is set, print version info to stderr and exit
-    if (matched("-V", "--version", argv[i])) {
+    } else if (matched("-V", "--version", argv[i])) {
+      // If -V or --version is set, print version info to stderr and exit
       print_version_info();
       return 0;
+    } else {
+      const char bad_option[500];
+      strncpy(bad_option, argv[i], sizeof(bad_option));
+      fprintf(stderr, "pstree: invalid option %s", bad_option);
+      print_help_text();
+      return EXIT_FAILURE;
     }
-
-
   }
   assert(!argv[argc]);
-  
+
   int result = print_pstree(should_show_pids, should_sort_numerically);
 
   return result;
 }
 
 static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
-  printf("[Debug] printing pstree with arg %d %d\n", should_show_pids, should_sort_numerically);
+  printf("[Debug] printing pstree with arg %d %d\n", should_show_pids,
+         should_sort_numerically);
   return 0;
 }
 
@@ -52,6 +55,12 @@ static void print_version_info() {
   char *VERSION_TEXT = "pstree\n"
                        "Copyleft (C) 0000-0000\n";
   fprintf(stderr, "%s", VERSION_TEXT);
+}
+
+// Prints help text to stderr
+static void print_help_text(){
+  char *HELP_TEXT = "Usage: pstree [-p | --show-pids] [-n | --numeric-sort] [-V | --version]";
+  fprintf(stderr, "%s", HELP_TEXT);
 }
 
 static void test_matched_ok() {
