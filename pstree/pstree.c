@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
       print_version_info();
       return 0;
     } else {
-      const char bad_option[500];
+      char bad_option[500];
       strncpy(bad_option, argv[i], sizeof(bad_option));
       fprintf(stderr, "pstree: invalid option %s", bad_option);
       print_help_text();
