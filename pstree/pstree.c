@@ -69,5 +69,6 @@ static void test_no_match_extra() {
 
 static void run_tests() {
   test_matched_ok();
+  test_match_p_show_pid_ok();
   test_no_match_extra();
 }
