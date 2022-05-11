@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
     assert(argv[i]);
     if (strncmp("-V", argv[i], 3) == 0 || strncmp("--version", argv[i], strlen("--version")) == 0){
       print_version_info();
-      printf("%ld\n", strlen("-V"));
+      printf("%zu\n", strlen("-V"));
     }
     printf("argv[%d] = %s\n", i, argv[i]);
   }
