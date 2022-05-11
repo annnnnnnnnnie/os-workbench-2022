@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-static void print_pstree(bool should_show_pids, bool should_sort_numerically);
+static int print_pstree(bool should_show_pids, bool should_sort_numerically);
 static void print_version_info();
 static void run_tests();
 
@@ -33,16 +33,18 @@ int main(int argc, char *argv[]) {
       return 0;
     }
 
-    print_pstree(should_show_pids, should_sort_numerically);
 
   }
   assert(!argv[argc]);
+  
+  int result = print_pstree(should_show_pids, should_sort_numerically);
 
-  return 0;
+  return result;
 }
 
-static void print_pstree(bool should_show_pids, bool should_sort_numerically) {
+static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   printf("[Debug] printing pstree with arg %d %d\n", should_show_pids, should_sort_numerically);
+  return 0;
 }
 
 // Prints version info to stderr
