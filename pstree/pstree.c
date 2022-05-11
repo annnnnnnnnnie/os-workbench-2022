@@ -16,6 +16,7 @@ bool matched(const char *s1, const char *s2, const char *input) {
 
 int main(int argc, char *argv[]) {
   run_tests();
+
   bool should_show_pids = false;
   bool should_sort_numerically = false;
   for (int i = 0; i < argc; i++) {
@@ -37,6 +38,7 @@ int main(int argc, char *argv[]) {
       return EXIT_FAILURE;
     }
   }
+  
   assert(!argv[argc]);
 
   int result = print_pstree(should_show_pids, should_sort_numerically);
