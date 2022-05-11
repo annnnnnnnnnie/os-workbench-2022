@@ -16,9 +16,18 @@ int main(int argc, char *argv[]) {
   for (int i = 0; i < argc; i++) {
     // If -V or --version is set, print version info to stderr and exit
     assert(argv[i]);
+    if (matched("-p", "--show-pids", argv[i])) {
+
+    }
+
+    if (matched("-n", "--numeric-sort", argv[i])) {
+
+    }
+
     if (matched("-V", "--version", argv[i])) {
       print_version_info();
     }
+
 
     printf("argv[%d] = %s\n", i, argv[i]);
   }
@@ -38,6 +47,15 @@ static void test_matched_ok() {
   const char *s2 = "--version";
   const char *input = "--version";
   assert(matched(s1, s2, input));
+}
+
+static void test_match_p_show_pid_ok() {
+  const char *s1 = "-p";
+  const char *s2 = "--show-pids";
+  const char *input_short = "-p";
+  const char *input_long = "--show-pids";
+  assert(matched(s1, s2, input_short));
+  assert(matched(s1, s2, input_long));
 }
 
 static void test_no_match_extra() {
