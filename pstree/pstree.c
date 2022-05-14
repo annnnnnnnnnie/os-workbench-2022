@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <dirent.h>
 
 static int print_pstree(bool should_show_pids, bool should_sort_numerically);
 static void print_version_info();
