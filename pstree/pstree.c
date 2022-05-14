@@ -62,7 +62,21 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
     printf("[Error] failed to open procfs\n");
     return 1;
   }
-
+  
+  char buf[500];
+  size_t result = fread(buf, sizeof(buf)-1, 1, fp);
+  if (result < sizeof(buf)-1){
+    if(foef(fp) != 0) {
+      printf("EOF reached\n");
+    } else if (ferror(fp) != 0) {
+      printf("Some other errors occurred");
+    } else {
+      assert(false && "Unreacheable state");
+    }
+  }
+  buf[500] = '\0';
+  printf("%s\n", buf);
+  fclose(fp);
   return 0;
 }
 
