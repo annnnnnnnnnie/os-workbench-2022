@@ -70,6 +70,9 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
       printf("EOF reached\n");
     } else if (ferror(fp) != 0) {
       printf("Some other errors occurred\n");
+      int result = fclose(fp);
+      assert(result == 0 && "Error occurred with fclose\n");
+      return 1;
     } else {
       assert(false && "Unreacheable state\n");
     }
