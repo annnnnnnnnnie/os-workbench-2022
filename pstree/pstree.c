@@ -69,7 +69,7 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
     if(feof(fp) != 0) {
       printf("EOF reached\n");
     } else if (ferror(fp) != 0) {
-      printf("Some other errors occurred\n");
+      printf("Some other errors occurred: %d\n", ferror(fp));
       int result = fclose(fp);
       assert(result == 0 && "Error occurred with fclose\n");
       return 1;
@@ -79,7 +79,7 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   }
   buf[500] = '\0';
   printf("%s\n", buf);
-  fclose(fp);
+  assert(fclose(fp) == 0 && "Error occurred with fclose");
   return 0;
 }
 
