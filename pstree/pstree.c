@@ -69,9 +69,9 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
     if(feof(fp) != 0) {
       printf("EOF reached\n");
     } else if (ferror(fp) != 0) {
-      printf("Some other errors occurred");
+      printf("Some other errors occurred\n");
     } else {
-      assert(false && "Unreacheable state");
+      assert(false && "Unreacheable state\n");
     }
   }
   buf[500] = '\0';
