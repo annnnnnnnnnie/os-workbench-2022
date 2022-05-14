@@ -1,8 +1,8 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 static int print_pstree(bool should_show_pids, bool should_sort_numerically);
 static void print_version_info();
@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
     int result = print_pstree(should_show_pids, should_sort_numerically);
     return result;
   }
-  
+
   for (int i = 1; i < argc; i++) {
     assert(argv[i]);
 
@@ -55,6 +55,14 @@ int main(int argc, char *argv[]) {
 static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   printf("[Debug] printing pstree with arg %d %d\n", should_show_pids,
          should_sort_numerically);
+  char procfs_root[] = "/proc/";
+  FILE *fp;
+  fp = fopen(procfs_root, "r");
+  if (fp == NULL) {
+    printf("[Error] failed to open procfs\n");
+    return 1;
+  }
+
   return 0;
 }
 
@@ -66,8 +74,9 @@ static void print_version_info() {
 }
 
 // Prints help text to stderr
-static void print_help_text(){
-  char *HELP_TEXT = "Usage: pstree [-p | --show-pids] [-n | --numeric-sort] [-V | --version]";
+static void print_help_text() {
+  char *HELP_TEXT =
+      "Usage: pstree [-p | --show-pids] [-n | --numeric-sort] [-V | --version]";
   fprintf(stderr, "%s\n", HELP_TEXT);
 }
 
