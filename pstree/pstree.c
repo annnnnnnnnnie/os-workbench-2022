@@ -66,7 +66,7 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   char buf[500];
   size_t result = fread(buf, sizeof(buf)-1, 1, fp);
   if (result < sizeof(buf)-1){
-    if(foef(fp) != 0) {
+    if(feof(fp) != 0) {
       printf("EOF reached\n");
     } else if (ferror(fp) != 0) {
       printf("Some other errors occurred");
