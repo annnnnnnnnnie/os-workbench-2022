@@ -48,10 +48,9 @@ int main(int argc, char *argv[]) {
       print_version_info();
       return 0;
     } else {
-      const int buf_size = 20;
-      char bad_option[buf_size];
+      char bad_option[21];
       strncpy(bad_option, argv[i], buf_size);
-      char bad_option[buf_size-1] = '\0';
+      char bad_option[20] = '\0';
       fprintf(stderr, "pstree: invalid option %s\n", bad_option);
       print_help_text();
       return EXIT_FAILURE;
