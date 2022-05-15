@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     } else {
       char bad_option[21];
       strncpy(bad_option, argv[i], buf_size);
-      char bad_option[20] = '\0';
+      bad_option[20] = '\0';
       fprintf(stderr, "pstree: invalid option %s\n", bad_option);
       print_help_text();
       return EXIT_FAILURE;
