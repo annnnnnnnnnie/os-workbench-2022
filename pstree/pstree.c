@@ -50,7 +50,6 @@ int main(int argc, char *argv[]) {
     } else {
       char bad_option[21];
       int buf_size = sizeof(bad_option) / sizeof(*bad_option);
-      printf("[Debug] buf size is %d\n", buf_size);
       strncpy(bad_option, argv[i], buf_size);
       bad_option[20] = '\0';
       fprintf(stderr, "pstree: invalid option %s\n", bad_option);
@@ -71,17 +70,23 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
          should_sort_numerically);
   char PROCFS_ROOT[] = "/proc/";
   DIR *dir;
-  struct dirent *dp;
+  struct dirent *ent;
   dir = opendir(PROCFS_ROOT);
   if (dir == NULL) {
     fprintf(stderr, "[Error] failed to open %s (%s)\n", PROCFS_ROOT,
             strerror(errno));
     return 1;
   }
-  char buf[500];
 
-  buf[500 - 1] = '\0';
-  printf("%s\n", buf);
+  while ((ent = readdir(dir)) != NULL) {
+    switch (ent->d_type) {
+    case DT_DIR:
+      printf("[Debug] %s/\n", ent->d_name);
+      break;
+    default:
+      break;
+    }
+  }
 
   return 0;
 }
