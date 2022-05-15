@@ -1,11 +1,11 @@
 #include <assert.h>
+#include <dirent.h>
+#include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <dirent.h>
 #include <sys/types.h>
-#include <errno.h>
 
 typedef struct pstree_node {
   char name[128];
@@ -49,6 +49,8 @@ int main(int argc, char *argv[]) {
       return 0;
     } else {
       char bad_option[21];
+      int buf_size = sizeof(bad_option) / sizeof(*bad_option);
+      print("[Debug] buf size is %d\n", buf_size);
       strncpy(bad_option, argv[i], buf_size);
       bad_option[20] = '\0';
       fprintf(stderr, "pstree: invalid option %s\n", bad_option);
@@ -72,14 +74,15 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   struct dirent *dp;
   dir = opendir(PROCFS_ROOT);
   if (dir == NULL) {
-    fprintf(stderr, "[Error] failed to open %s (%s)\n", PROCFS_ROOT, strerror(errno));
+    fprintf(stderr, "[Error] failed to open %s (%s)\n", PROCFS_ROOT,
+            strerror(errno));
     return 1;
   }
   char buf[500];
 
   buf[500 - 1] = '\0';
   printf("%s\n", buf);
-  
+
   return 0;
 }
 
