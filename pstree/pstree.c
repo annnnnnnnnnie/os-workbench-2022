@@ -4,6 +4,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <sys/types.h>
+#include <errno.h>
+
+typedef struct pstree_node {
+  char name[128];
+  pid_t pid;
+  pid_t parent_pid;
+  struct pstree_node *parent;
+  struct pstree_node *children[128];
+} pstree_node_t;
 
 static int print_pstree(bool should_show_pids, bool should_sort_numerically);
 static void print_version_info();
@@ -38,8 +48,11 @@ int main(int argc, char *argv[]) {
       print_version_info();
       return 0;
     } else {
-      char bad_option[500];
-      strncpy(bad_option, argv[i], sizeof(bad_option));
+      char bad_option[20];
+      int buf_size = sizeof(bad_option) / sizeof(*bad_option);
+      print("[Debug] buf size is %d\n", buf_size);
+      strncpy(bad_option, argv[i], buf_size);
+      char bad_option[buf_size-1] = '\0';
       fprintf(stderr, "pstree: invalid option %s\n", bad_option);
       print_help_text();
       return EXIT_FAILURE;
@@ -56,31 +69,19 @@ int main(int argc, char *argv[]) {
 static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   printf("[Debug] printing pstree with arg %d %d\n", should_show_pids,
          should_sort_numerically);
-  char procfs_root[] = "/proc/";
-  FILE *fp;
-  fp = fopen(procfs_root, "r");
-  if (fp == NULL) {
-    printf("[Error] failed to open procfs\n");
+  char PROCFS_ROOT[] = "/proc/";
+  DIR *dir;
+  struct dirent *dp;
+  dir = opendir(PROCFS_ROOT);
+  if (dir == NULL) {
+    fprintf(stderr, "[Error] failed to open %s (%s)\n", PROCFS_ROOT, strerror(errno));
     return 1;
   }
-  
   char buf[500];
-  size_t result = fread(buf, sizeof(buf)-1, 1, fp);
-  if (result < sizeof(buf)-1){
-    if(feof(fp) != 0) {
-      printf("EOF reached\n");
-    } else if (ferror(fp) != 0) {
-      printf("Some other errors occurred: %d\n", ferror(fp));
-      int result = fclose(fp);
-      assert(result == 0 && "Error occurred with fclose\n");
-      return 1;
-    } else {
-      assert(false && "Unreacheable state\n");
-    }
-  }
-  buf[500] = '\0';
+
+  buf[500 - 1] = '\0';
   printf("%s\n", buf);
-  assert(fclose(fp) == 0 && "Error occurred with fclose");
+  
   return 0;
 }
 
