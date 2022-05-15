@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     } else {
       char bad_option[21];
       int buf_size = sizeof(bad_option) / sizeof(*bad_option);
-      print("[Debug] buf size is %d\n", buf_size);
+      printf("[Debug] buf size is %d\n", buf_size);
       strncpy(bad_option, argv[i], buf_size);
       bad_option[20] = '\0';
       fprintf(stderr, "pstree: invalid option %s\n", bad_option);
