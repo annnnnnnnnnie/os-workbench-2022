@@ -17,6 +17,7 @@ typedef struct pstree_node {
 } pstree_node_t;
 
 static int print_pstree(bool should_show_pids, bool should_sort_numerically);
+static int dir_is_pid(const struct dirent *d);
 static bool string_is_number(const char *d_name, int max_length);
 static void print_version_info();
 static void print_help_text();
@@ -71,31 +72,44 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   printf("[Debug] printing pstree with arg %d %d\n", should_show_pids,
          should_sort_numerically);
   char PROCFS_ROOT[] = "/proc/";
-  DIR *dir;
+
   struct dirent *ent;
-  dir = opendir(PROCFS_ROOT);
-  if (dir == NULL) {
-    fprintf(stderr, "[Error] failed to open %s (%s)\n", PROCFS_ROOT,
-            strerror(errno));
+  struct dirent **files;
+  int n = scandir(PROCFS_ROOT, &files, dir_is_pid, alphasort);
+  if (n < 0) {
+    perror("Cannot open /proc");
     return 1;
   }
 
-  while ((ent = readdir(dir)) != NULL) {
+  /* Loop through file names */
+  for (int i = 0; i < n; i++) {
+    /* Get pointer to file entry */
+    struct dirent *ent = files[i];
+
+    /* Output file name */
     switch (ent->d_type) {
     case DT_DIR: {
-      const char *d_name = ent->d_name;
-      if (string_is_number(d_name, 256)) {
-        printf("[Debug] %s/\n", d_name);
-      }
+      printf("%s/\n", ent->d_name);
       break;
     }
     default:
-      break;
+      printf("%s*\n", ent->d_name);
     }
   }
 
-  assert(closedir(dir) == 0 && "Failed to close dir\n");
+  /* Release file names */
+  for (int i = 0; i < n; i++) {
+    free(files[i]);
+  }
+  free(files);
 
+  return 0;
+}
+
+static int dir_is_pid(const struct dirent *d) {
+  if (string_is_number(d->d_name, 256)) {
+    return 1;
+  }
   return 0;
 }
 
