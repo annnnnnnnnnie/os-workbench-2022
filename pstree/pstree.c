@@ -98,7 +98,9 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
 }
 
 static bool string_is_number(const char *str, int max_length) {
-  for (char *c = str, int i = 0; *c != '\0' && i < max_length; c++, i++) {
+  const char *c;
+  int i;
+  for (c = str, i = 0; *c != '\0' && i < max_length; c++, i++) {
     if (!isdigit(*c)) {
       return false;
     }
