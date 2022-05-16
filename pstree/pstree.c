@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <ctype.h>
 #include <dirent.h>
 #include <errno.h>
 #include <stdbool.h>
@@ -16,6 +17,7 @@ typedef struct pstree_node {
 } pstree_node_t;
 
 static int print_pstree(bool should_show_pids, bool should_sort_numerically);
+static bool string_is_number(char *d_name, int max_length);
 static void print_version_info();
 static void print_help_text();
 static void run_tests();
@@ -95,6 +97,15 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   return 0;
 }
 
+static bool string_is_number(char *str, int max_length) {
+  for (char *c = str, int i = 0; *c != '\0' && i < max_length; c++, i++) {
+    if (!isdigit(*c)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 // Prints version info to stderr
 static void print_version_info() {
   char *VERSION_TEXT = "pstree\n"
@@ -134,8 +145,23 @@ static void test_no_match_extra() {
   assert(!matched(s1, s2, input_short_extra));
 }
 
+static void test_numbers_can_be_recognized() {
+  const char *s1 = "123";
+  assert(string_is_number(s1, 3));
+  const char *s2 = "123456789";
+  assert(string_is_number(s2, 9));
+}
+
+static void test_non_numbers_can_be_recognized() {
+  const char *s1 = "123a";
+  assert(!string_is_number(s1, 4));
+  const char *s2 = "123456789b";
+  assert(!string_is_number(s2, 10));
+}
+
 static void run_tests() {
   test_matched_ok();
   test_match_p_show_pid_ok();
   test_no_match_extra();
+  test_numbers_can_be_recognized();
 }
