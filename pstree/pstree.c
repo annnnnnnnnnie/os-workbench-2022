@@ -80,10 +80,11 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
 
   while ((ent = readdir(dir)) != NULL) {
     switch (ent->d_type) {
-    case DT_DIR:
+    case DT_DIR: {
       char *d_name = ent->d_name;
       printf("[Debug] %s/\n", d_name);
       break;
+    }
     default:
       break;
     }
