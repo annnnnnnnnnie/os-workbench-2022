@@ -81,12 +81,15 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   while ((ent = readdir(dir)) != NULL) {
     switch (ent->d_type) {
     case DT_DIR:
-      printf("[Debug] %s/\n", ent->d_name);
+      char *d_name = ent->d_name;
+      printf("[Debug] %s/\n", d_name);
       break;
     default:
       break;
     }
   }
+
+  assert(closedir(dir) == 0 && "Failed to close dir\n");
 
   return 0;
 }
