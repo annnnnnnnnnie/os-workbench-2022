@@ -17,7 +17,7 @@ typedef struct pstree_node {
 } pstree_node_t;
 
 static int print_pstree(bool should_show_pids, bool should_sort_numerically);
-static bool string_is_number(char *d_name, int max_length);
+static bool string_is_number(const char *d_name, int max_length);
 static void print_version_info();
 static void print_help_text();
 static void run_tests();
@@ -97,7 +97,7 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   return 0;
 }
 
-static bool string_is_number(char *str, int max_length) {
+static bool string_is_number(const char *str, int max_length) {
   for (char *c = str, int i = 0; *c != '\0' && i < max_length; c++, i++) {
     if (!isdigit(*c)) {
       return false;
@@ -164,4 +164,5 @@ static void run_tests() {
   test_match_p_show_pid_ok();
   test_no_match_extra();
   test_numbers_can_be_recognized();
+  test_non_numbers_can_be_recognized();
 }
