@@ -93,7 +93,7 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
       break;
     }
     default:
-      printf("%s*\n", ent->d_name);
+      assert(false && "Should not encounter non pid dirs");
     }
   }
 
