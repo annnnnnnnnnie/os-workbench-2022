@@ -93,7 +93,7 @@ static void try_fill_in_process_name(pstree_node_t *pstree_node,
     assert(strncpy(pstree_node->name, line + strlen(name_str) + 1, 128) &&
            "Failed to copy over process name");
     pstree_node->name[127] = '\0';
-    //printf("[Debug] name is %s\n", pstree_node->name);
+    // printf("[Debug] name is %s\n", pstree_node->name);
   }
 }
 
@@ -162,9 +162,8 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
       char buf[512];
       while (fgets(buf, sizeof(buf), fp)) {
         try_fill_in_pstree_node(pstree_node, buf);
-
-        // Add to the list
       }
+      // Add to the list
       pstree_nodes[pstree_node_index++] = pstree_node;
     }
   }
