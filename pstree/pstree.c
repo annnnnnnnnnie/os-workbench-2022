@@ -78,17 +78,17 @@ static FILE *open_process_status_file(const char *pid_str) {
   assert(strncat(p_file_name, pid_str, sizeof(p_file_name) - 1));
   assert(strncat(p_file_name, "/", 1));
   assert(strncat(p_file_name, "status", strlen("status")));
-  //printf("[Debug] process status file full path: %s\n", p_file_name);
+  // printf("[Debug] process status file full path: %s\n", p_file_name);
   fp = fopen(p_file_name, "r");
   return fp;
 }
 
 static void try_fill_in_process_name(pstree_node_t *pstree_node,
                                      const char *line) {
+  printf("[Debug] dealing with line %s\n", line);
   const char *name_str = "Name:";
   if (strncmp(name_str, line, strlen(name_str)) == 0) {
-    assert(strncpy(pstree_node->name,
-                   line + strlen(name_str) + 1, 128) &&
+    assert(strncpy(pstree_node->name, line + strlen(name_str) + 1, 128) &&
            "Failed to copy over process name");
     pstree_node->name[127] = '\0';
   }
@@ -99,8 +99,9 @@ static void try_fill_in_pstree_node(pstree_node_t *pstree_node,
   try_fill_in_process_name(pstree_node, line);
 }
 
-static void print_pstree_node(pstree_node_t *pstree_node){
-  printf("pstree node\n Name: %s\n pid: %d\n", pstree_node->name, pstree_node->pid);
+static void print_pstree_node(pstree_node_t *pstree_node) {
+  printf("pstree node\n Name: %s\n pid: %d\n", pstree_node->name,
+         pstree_node->pid);
 }
 
 static void print_pstree_nodes_list(pstree_node_t **pstree_nodes, int n_nodes) {
@@ -139,7 +140,7 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
 
     switch (ent->d_type) {
     case DT_DIR: {
-      printf("%s/\n", ent->d_name);
+      // printf("[Debug] %s/\n", ent->d_name);
 
       /* get the file /proc/pid/status */
       FILE *fp;
