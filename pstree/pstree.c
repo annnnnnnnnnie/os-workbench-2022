@@ -16,6 +16,8 @@ typedef struct pstree_node {
   struct pstree_node *children[128];
 } pstree_node_t;
 
+char PROCFS_ROOT[] = "/proc/";
+
 static int print_pstree(bool should_show_pids, bool should_sort_numerically);
 static int dir_is_pid(const struct dirent *d);
 static bool string_is_number(const char *d_name, int max_length);
@@ -68,28 +70,100 @@ int main(int argc, char *argv[]) {
   return result;
 }
 
+static FILE *open_process_status_file(const char *pid_str) {
+  FILE *fp;
+  char p_file_name[512];
+  char *status_file_name = "status";
+  assert(strncat(p_file_name, PROCFS_ROOT, sizeof(PROCFS_ROOT)));
+  assert(strncat(p_file_name, pid_str, 256));
+  assert(strncat(p_file_name, "/", 1));
+  assert(strncat(p_file_name, "status", sizeof(status_file_name)));
+  fp = fopen(p_file_name, "r");
+  return fp;
+}
+
+static void try_fill_in_process_name(pstree_node_t *pstree_node,
+                                     const char *line) {
+  const char *name_str = "Name:";
+  if (strncmp(name_str, line, sizeof(name_str))) {
+    assert(strncpy(pstree_node->name,
+                   line + sizeof(name_str) / sizeof(*name_str) + 1, 128) &&
+           "Failed to copy over process name");
+    pstree_node->name[127] = '\0';
+  }
+}
+
+static void try_fill_in_pstree_node(pstree_node_t *pstree_node,
+                                    const char *line) {
+  try_fill_in_process_name(pstree_node, line);
+}
+
+static void print_pstree_node(pstree_node_t *pstree_node){
+  printf("pstree node\n Name: %s\n pid: %d\n", pstree_node->name, pstree_node->pid);
+}
+
+static void print_pstree_nodes_list(pstree_node_t **pstree_nodes, int n_nodes) {
+  for (int i = 0; i < n_nodes; i++) {
+    print_pstree_node(pstree_nodes[i]);
+  }
+}
+
 static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   printf("[Debug] printing pstree with arg %d %d\n", should_show_pids,
          should_sort_numerically);
-  char PROCFS_ROOT[] = "/proc/";
 
   struct dirent *ent;
   struct dirent **files;
-  int n = scandir(PROCFS_ROOT, &files, dir_is_pid, alphasort);
+  int n;
+  if (should_sort_numerically) {
+    n = scandir(PROCFS_ROOT, &files, dir_is_pid, alphasort);
+  } else {
+    n = scandir(PROCFS_ROOT, &files, dir_is_pid, NULL);
+  }
   if (n < 0) {
     perror("Cannot open /proc");
     return 1;
   }
+
+  int N_MAX_PSTREE_NODES = 1024;
+  pstree_node_t **pstree_nodes =
+      malloc(N_MAX_PSTREE_NODES * sizeof(*pstree_nodes));
+  assert(pstree_nodes && "Failed to allocate memory for pstree");
+  int pstree_node_index = 0;
 
   /* Loop through file names */
   for (int i = 0; i < n; i++) {
     /* Get pointer to file entry */
     struct dirent *ent = files[i];
 
-    /* Output file name */
     switch (ent->d_type) {
     case DT_DIR: {
       printf("%s/\n", ent->d_name);
+
+      /* get the file /proc/pid/status */
+      FILE *fp;
+      fp = open_process_status_file(ent->d_name);
+
+      if (fp == NULL) {
+        perror("Failed to open process status");
+      } else {
+        pstree_node_t *pstree_node = malloc(1 * sizeof(*pstree_node));
+        if (!pstree_node) {
+          perror("Failed to malloc for one pstree node");
+          continue;
+        }
+
+        pstree_node->pid = atoi(ent->d_name);
+
+        /* Read one line from /proc/pid/status */
+        char buf[512];
+        while (fgets(buf, sizeof(buf), fp)) {
+          try_fill_in_pstree_node(pstree_node, buf);
+
+          // Add to the list
+          pstree_nodes[pstree_node_index++] = pstree_node;
+        }
+      }
       break;
     }
     default:
@@ -102,6 +176,14 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
     free(files[i]);
   }
   free(files);
+
+  print_pstree_nodes_list(pstree_nodes, pstree_node_index);
+
+  /* Free pstree nodes*/
+  for (int i = 0; i < pstree_node_index; i++) {
+    free(pstree_nodes[i]);
+  }
+  free(pstree_nodes);
 
   return 0;
 }
