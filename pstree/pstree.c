@@ -140,39 +140,32 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   for (int i = 0; i < n; i++) {
     /* Get pointer to file entry */
     struct dirent *ent = files[i];
+    assert(ent->d_type == DT_DIR && "Should not encounter non pid dirs");
+    // printf("[Debug] %s/\n", ent->d_name);
 
-    switch (ent->d_type) {
-    case DT_DIR: {
-      // printf("[Debug] %s/\n", ent->d_name);
+    /* get the file /proc/pid/status */
+    FILE *fp;
+    fp = open_process_status_file(ent->d_name);
 
-      /* get the file /proc/pid/status */
-      FILE *fp;
-      fp = open_process_status_file(ent->d_name);
-
-      if (fp == NULL) {
-        perror("Failed to open process status");
-      } else {
-        pstree_node_t *pstree_node = malloc(1 * sizeof(*pstree_node));
-        if (!pstree_node) {
-          perror("Failed to malloc for one pstree node");
-          continue;
-        }
-
-        pstree_node->pid = atoi(ent->d_name);
-
-        /* Read one line from /proc/pid/status */
-        char buf[512];
-        while (fgets(buf, sizeof(buf), fp)) {
-          try_fill_in_pstree_node(pstree_node, buf);
-
-          // Add to the list
-          pstree_nodes[pstree_node_index++] = pstree_node;
-        }
+    if (fp == NULL) {
+      perror("Failed to open process status");
+    } else {
+      pstree_node_t *pstree_node = malloc(1 * sizeof(*pstree_node));
+      if (!pstree_node) {
+        perror("Failed to malloc for one pstree node");
+        continue;
       }
-      break;
-    }
-    default:
-      assert(false && "Should not encounter non pid dirs");
+
+      pstree_node->pid = atoi(ent->d_name);
+
+      /* Read one line from /proc/pid/status */
+      char buf[512];
+      while (fgets(buf, sizeof(buf), fp)) {
+        try_fill_in_pstree_node(pstree_node, buf);
+
+        // Add to the list
+        pstree_nodes[pstree_node_index++] = pstree_node;
+      }
     }
   }
 
