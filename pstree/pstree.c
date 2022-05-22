@@ -74,10 +74,10 @@ static FILE *open_process_status_file(const char *pid_str) {
   FILE *fp;
   char p_file_name[512];
   char *status_file_name = "status";
-  assert(strncat(p_file_name, PROCFS_ROOT, sizeof(PROCFS_ROOT)));
-  assert(strncat(p_file_name, pid_str, 256));
-  assert(strncat(p_file_name, "/", 1));
-  assert(strncat(p_file_name, "status", sizeof(status_file_name)));
+  assert(strncat(p_file_name, PROCFS_ROOT, sizeof(p_file_name)));
+  assert(strncat(p_file_name, pid_str, sizeof(p_file_name)));
+  assert(strncat(p_file_name, "/", sizeof(p_file_name)));
+  assert(strncat(p_file_name, "status", sizeof(p_file_name)));
   fp = fopen(p_file_name, "r");
   return fp;
 }
@@ -87,7 +87,7 @@ static void try_fill_in_process_name(pstree_node_t *pstree_node,
   const char *name_str = "Name:";
   if (strncmp(name_str, line, sizeof(name_str))) {
     assert(strncpy(pstree_node->name,
-                   line + sizeof(name_str) / sizeof(*name_str) + 1, 128) &&
+                   line + strlen(name_str) + 1, 128) &&
            "Failed to copy over process name");
     pstree_node->name[127] = '\0';
   }
