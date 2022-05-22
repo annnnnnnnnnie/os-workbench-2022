@@ -96,6 +96,7 @@ static void try_fill_in_process_name(pstree_node_t *pstree_node,
          *c != '\n' && *c != '\0' && i < 128; i++, c++) {
       pstree_node->name[i] = *c;
     }
+    pstree_node->name[i] = '\0';
     pstree_node->name[127] = '\0';
     // printf("[Debug] name is %s\n", pstree_node->name);
   }
