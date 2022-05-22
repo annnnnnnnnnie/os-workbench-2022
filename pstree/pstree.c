@@ -78,7 +78,7 @@ static FILE *open_process_status_file(const char *pid_str) {
   assert(strncat(p_file_name, pid_str, sizeof(p_file_name) - 1));
   assert(strncat(p_file_name, "/", 1));
   assert(strncat(p_file_name, "status", strlen("status")));
-  printf("process status file full path: %s\n", p_file_name);
+  //printf("[Debug] process status file full path: %s\n", p_file_name);
   fp = fopen(p_file_name, "r");
   return fp;
 }
