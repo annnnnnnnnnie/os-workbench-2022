@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 
 static FILE *open_process_status_file(const char *pid_str) {
   FILE *fp;
-  char p_file_name[512];
+  char p_file_name[512] = {0};
   char *status_file_name = "status";
   assert(strncat(p_file_name, PROCFS_ROOT, strlen(PROCFS_ROOT)));
   assert(strncat(p_file_name, pid_str, sizeof(p_file_name) - 1));
