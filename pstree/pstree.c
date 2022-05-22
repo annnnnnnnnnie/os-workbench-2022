@@ -74,10 +74,10 @@ static FILE *open_process_status_file(const char *pid_str) {
   FILE *fp;
   char p_file_name[512];
   char *status_file_name = "status";
-  assert(strncat(p_file_name, PROCFS_ROOT, sizeof(p_file_name)));
-  assert(strncat(p_file_name, pid_str, sizeof(p_file_name)));
-  assert(strncat(p_file_name, "/", sizeof(p_file_name)));
-  assert(strncat(p_file_name, "status", sizeof(p_file_name)));
+  assert(strncat(p_file_name, PROCFS_ROOT, strlen(PROCFS_ROOT)));
+  assert(strncat(p_file_name, pid_str, sizeof(p_file_name) - 1));
+  assert(strncat(p_file_name, "/", 1));
+  assert(strncat(p_file_name, "status", strlen("status")));
   fp = fopen(p_file_name, "r");
   return fp;
 }
