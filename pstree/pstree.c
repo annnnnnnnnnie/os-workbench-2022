@@ -91,7 +91,7 @@ static void try_fill_in_process_name(pstree_node_t *pstree_node,
     // printf("[Debug] chosen line: %s\n", line);
     // printf("[Debug] remaining line: %s\n", line + strlen(name_str) + 1);
     int i;
-    char *c;
+    const char *c;
     for (i = 0, c = line + strlen(name_str) + 1;
          *c != '\n' && *c != '\0' && i < 128; i++, c++) {
       pstree_node->name[i] = *c;
