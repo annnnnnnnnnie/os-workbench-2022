@@ -89,6 +89,7 @@ static void try_fill_in_process_name(pstree_node_t *pstree_node,
   const char *name_str = "Name:";
   if (strncmp(name_str, line, strlen(name_str)) == 0) {
     printf("[Debug] chosen line: %s\n", line);
+    printf("[Debug] remaining line: %s\n", line + strlen(name_str) + 1);
     assert(strncpy(pstree_node->name, line + strlen(name_str) + 1, 128) &&
            "Failed to copy over process name");
     pstree_node->name[127] = '\0';
