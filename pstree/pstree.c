@@ -85,9 +85,10 @@ static FILE *open_process_status_file(const char *pid_str) {
 
 static void try_fill_in_process_name(pstree_node_t *pstree_node,
                                      const char *line) {
-  printf("[Debug] dealing with line %s\n", line);
+  printf("[Debug] dealing with line: %s\n", line);
   const char *name_str = "Name:";
   if (strncmp(name_str, line, strlen(name_str)) == 0) {
+    printf("[Debug] chosen line: %s\n", line);
     assert(strncpy(pstree_node->name, line + strlen(name_str) + 1, 128) &&
            "Failed to copy over process name");
     pstree_node->name[127] = '\0';
