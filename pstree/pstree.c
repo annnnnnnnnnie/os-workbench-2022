@@ -108,8 +108,9 @@ static void try_fill_in_pstree_node(pstree_node_t *pstree_node,
 }
 
 static void print_pstree_node(pstree_node_t *pstree_node) {
-  printf("pstree node\n Name: %s\n pid: %d\n\n", pstree_node->name,
+  printf("pstree node\n Name: %s\n pid: %d\n", pstree_node->name,
          pstree_node->pid);
+  printf("\n");
 }
 
 static void print_pstree_nodes_list(pstree_node_t **pstree_nodes, int n_nodes) {
