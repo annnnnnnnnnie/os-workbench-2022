@@ -204,6 +204,8 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
 
   pstree_node_t *root = build_pstree(pstree_nodes);
 
+  free(root);
+
   /* Free pstree nodes*/
   for (int i = 0; i < pstree_node_index; i++) {
     free(pstree_nodes[i]);
