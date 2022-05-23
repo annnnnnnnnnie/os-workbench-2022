@@ -102,14 +102,30 @@ static void try_fill_in_process_name(pstree_node_t *pstree_node,
   }
 }
 
+static void try_fill_in_ppid(pstree_node_t *pstree_node, const char *line) {
+  const char *ppid_str = "PPid:";
+  if (strncmp(ppid_str, line, strlen(ppid_str)) == 0) {
+    int i;
+    const char *c;
+    char buf[128];
+    for (i = 0, c = line + strlen(ppid_str) + 1;
+         *c != '\n' && *c != '\0' && i < 128; i++, c++) {
+      buf[i] = *c;
+    }
+    int ppid = atoi(buf);
+    pstree_node->parent_pid = ppid;
+  }
+}
+
 static void try_fill_in_pstree_node(pstree_node_t *pstree_node,
                                     const char *line) {
   try_fill_in_process_name(pstree_node, line);
+  try_fill_in_ppid(pstree_node, line);
 }
 
 static void print_pstree_node(pstree_node_t *pstree_node) {
-  printf("pstree node\n Name: %s\n pid: %d\n", pstree_node->name,
-         pstree_node->pid);
+  printf("pstree node\n Name: %s\n pid: %d\n ppid: %d\n", pstree_node->name,
+         pstree_node->pid, pstree_node->parent_pid);
   printf("\n");
 }
 
