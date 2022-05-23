@@ -199,7 +199,7 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   print_pstree_nodes_list(pstree_nodes, pstree_node_index);
 
   /* Free pstree nodes*/
-  for (int i = 0; i <= pstree_node_index; i++) {
+  for (int i = 0; i < pstree_node_index; i++) {
     free(pstree_nodes[i]);
   }
   free(pstree_nodes);
