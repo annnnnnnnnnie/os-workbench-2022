@@ -234,6 +234,7 @@ static void fill_in_children(pstree_node_t *root,
       fill_in_children(current_pstree_node, pstree_nodes, max_index);
     }
   }
+  root->children[i] = NULL;
 }
 
 static pstree_node_t *build_pstree(pstree_node_t **pstree_nodes, int max_index) {
