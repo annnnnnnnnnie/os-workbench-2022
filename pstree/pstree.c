@@ -222,6 +222,7 @@ static int fill_in_next_generation(pstree_node_t **next_generation, int i,
       next_generation[i++] = (*cur);
     }
   }
+  return i;
 }
 
 static pstree_node_t *build_pstree(pstree_node_t **pstree_nodes) {
@@ -234,9 +235,9 @@ static pstree_node_t *build_pstree(pstree_node_t **pstree_nodes) {
   current_generation[0] = root;
   while (current_generation[0]) {
     int i = 0;
-    pstree_node_t **next_generation = malloc(128 * sizeof(*current_generation));
-    for (pstree_node_t **cur = current_generation[0]; *cur != NULL; cur++) {
-      i = fill_in_next_generation(next_generation, i, cur, pstree_nodes);
+    pstree_node_t **next_generation = malloc(128 * sizeof(*next_generation));
+    for (pstree_node_t **cur = current_generation; *cur != NULL; cur++) {
+      i = fill_in_next_generation(next_generation, i, *cur, pstree_nodes);
     }
     free(current_generation);
     current_generation = next_generation;
