@@ -137,6 +137,15 @@ static void print_pstree_nodes_list(pstree_node_t **pstree_nodes, int n_nodes) {
   }
 }
 
+static void print_pstree_tree(pstree_node_t *root) {
+  printf("pstree node (pid %d) %s ", root->pid, root->name);
+  for(pstree_node_t **cur = root->children; *cur != NULL; cur++) {
+    print_pstree_tree(*cur);
+    printf("\n");
+  }
+  printf("\n");
+}
+
 static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   printf("[Debug] printing pstree with arg %d %d\n", should_show_pids,
          should_sort_numerically);
@@ -200,6 +209,7 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   print_pstree_nodes_list(pstree_nodes, pstree_node_index);
 
   pstree_node_t *root = build_pstree(pstree_nodes, pstree_node_index);
+  print_pstree_tree(root);
 
   free(root);
 
