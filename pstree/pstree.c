@@ -212,17 +212,17 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   return 0;
 }
 
-static int fill_in_next_generation(pstree_node_t **next_generation, int i,
-                                   pstree_node_t *cur,
-                                   pstree_node_t **pstree_nodes) {
-  int cur_pid = cur->pid;
-  for (pstree_node_t **cur = pstree_nodes; *cur != NULL; cur++) {
+static void fill_in_children(pstree_node_t *root,
+                             pstree_node_t **pstree_nodes) {
+  int root_pid = root->pid;
+  int i = 0;
+  for(pstree_node_t **cur = pstree_nodes; *cur != NULL; cur++) {
     int cur_ppid = (*cur)->parent_pid;
-    if(cur_ppid == cur_pid){
-      next_generation[i++] = (*cur);
+    if (cur_ppid == root_pid) {
+      root->children[i++] = *cur;
+      fill_in_children(cur, pstree_nodes);
     }
   }
-  return i;
 }
 
 static pstree_node_t *build_pstree(pstree_node_t **pstree_nodes) {
@@ -230,19 +230,7 @@ static pstree_node_t *build_pstree(pstree_node_t **pstree_nodes) {
   strncpy(root->name, "root", sizeof("root") + 1);
   root->pid = 0;
   root->parent_pid = -1;
-  pstree_node_t **current_generation =
-      malloc(128 * sizeof(*current_generation));
-  current_generation[0] = root;
-  while (current_generation[0]) {
-    int i = 0;
-    pstree_node_t **next_generation = malloc(128 * sizeof(*next_generation));
-    for (pstree_node_t **cur = current_generation; *cur != NULL; cur++) {
-      i = fill_in_next_generation(next_generation, i, *cur, pstree_nodes);
-    }
-    free(current_generation);
-    current_generation = next_generation;
-  }
-
+  fill_in_children(root, pstree_nodes);
   return root;
 }
 
