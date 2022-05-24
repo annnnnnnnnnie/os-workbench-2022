@@ -220,7 +220,7 @@ static void fill_in_children(pstree_node_t *root,
     int cur_ppid = (*cur)->parent_pid;
     if (cur_ppid == root_pid) {
       root->children[i++] = *cur;
-      fill_in_children(cur, pstree_nodes);
+      fill_in_children(*cur, pstree_nodes);
     }
   }
 }
