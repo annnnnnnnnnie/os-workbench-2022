@@ -25,10 +25,7 @@ static void print_version_info();
 static void print_help_text();
 static void run_tests();
 
-static pstree_node_t *build_pstree(pstree_node_t **pstree_nodes){
-  pstree_node_t *root = malloc(1 * sizeof(*root));
-  return root;
-}
+static pstree_node_t *build_pstree(pstree_node_t **pstree_nodes);
 
 bool matched(const char *s1, const char *s2, const char *input) {
   return (strncmp(s1, input, strlen(s1) + 1) == 0 ||
@@ -215,6 +212,39 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   return 0;
 }
 
+static int fill_in_next_generation(pstree_node_t **next_generation, int i,
+                                   pstree_node_t *cur,
+                                   pstree_node_t **pstree_nodes) {
+  int cur_pid = cur->pid;
+  for (pstree_node_t **cur = pstree_nodes; *cur != NULL; cur++) {
+    int cur_ppid = (*cur)->parent_pid;
+    if(cur_ppid == cur_pid){
+      next_generation[i++] = (*cur);
+    }
+  }
+}
+
+static pstree_node_t *build_pstree(pstree_node_t **pstree_nodes) {
+  pstree_node_t *root = malloc(1 * sizeof(*root));
+  strncpy(root->name, "root", sizeof("root") + 1);
+  root->pid = 0;
+  root->parent_pid = -1;
+  pstree_node_t **current_generation =
+      malloc(128 * sizeof(*current_generation));
+  current_generation[0] = root;
+  while (current_generation[0]) {
+    int i = 0;
+    pstree_node_t **next_generation = malloc(128 * sizeof(*current_generation));
+    for (pstree_node_t **cur = current_generation[0]; *cur != NULL; cur++) {
+      i = fill_in_next_generation(next_generation, i, cur, pstree_nodes);
+    }
+    free(current_generation);
+    current_generation = next_generation;
+  }
+
+  return root;
+}
+
 static int dir_is_pid(const struct dirent *d) {
   if (string_is_number(d->d_name, 256)) {
     return 1;
@@ -246,6 +276,8 @@ static void print_help_text() {
       "Usage: pstree [-p | --show-pids] [-n | --numeric-sort] [-V | --version]";
   fprintf(stderr, "%s\n", HELP_TEXT);
 }
+
+/*=========== Tests ===================*/
 
 static void test_matched_ok() {
   const char *s1 = "-V";
