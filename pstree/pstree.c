@@ -25,7 +25,7 @@ static void print_version_info();
 static void print_help_text();
 static void run_tests();
 
-static pstree_node_t *build_pstree(pstree_node_t **pstree_nodes);
+static pstree_node_t *build_pstree(pstree_node_t **pstree_nodes, int max_index);
 
 bool matched(const char *s1, const char *s2, const char *input) {
   return (strncmp(s1, input, strlen(s1) + 1) == 0 ||
@@ -199,7 +199,7 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
   free(files);
   print_pstree_nodes_list(pstree_nodes, pstree_node_index);
 
-  pstree_node_t *root = build_pstree(pstree_nodes);
+  pstree_node_t *root = build_pstree(pstree_nodes, pstree_node_index);
 
   free(root);
 
@@ -213,24 +213,25 @@ static int print_pstree(bool should_show_pids, bool should_sort_numerically) {
 }
 
 static void fill_in_children(pstree_node_t *root,
-                             pstree_node_t **pstree_nodes) {
+                             pstree_node_t **pstree_nodes, int max_index) {
   int root_pid = root->pid;
   int i = 0;
-  for(pstree_node_t **cur = pstree_nodes; *cur != NULL; cur++) {
-    int cur_ppid = (*cur)->parent_pid;
+  for(int j = 0; j < max_index; j++) {
+    pstree_node_t *current_pstree_node = pstree_nodes[j];
+    int cur_ppid = current_pstree_node->parent_pid;
     if (cur_ppid == root_pid) {
-      root->children[i++] = *cur;
-      fill_in_children(*cur, pstree_nodes);
+      root->children[i++] = current_pstree_node;
+      fill_in_children(current_pstree_node, pstree_nodes, max_index);
     }
   }
 }
 
-static pstree_node_t *build_pstree(pstree_node_t **pstree_nodes) {
+static pstree_node_t *build_pstree(pstree_node_t **pstree_nodes, int max_index) {
   pstree_node_t *root = malloc(1 * sizeof(*root));
   strncpy(root->name, "root", sizeof("root") + 1);
   root->pid = 0;
   root->parent_pid = -1;
-  fill_in_children(root, pstree_nodes);
+  fill_in_children(root, pstree_nodes, max_index);
   return root;
 }
 
