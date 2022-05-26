@@ -340,6 +340,10 @@ static void test_build_pstree(){
   int max_index = 5;
   pstree_node_t *tree = build_pstree(nodes, max_index);
   print_pstree_tree(tree);
+  free(tree);
+  for(int i = 0; i < max_index; i++){
+    free(nodes[i]);
+  }
 }
 
 static void run_tests() {
