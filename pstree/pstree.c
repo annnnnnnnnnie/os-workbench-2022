@@ -141,7 +141,7 @@ static void print_pstree_tree(pstree_node_t *root) {
   printf("(pid %d) %s --- ", root->pid, root->name);
   for(pstree_node_t **cur = root->children; *cur != NULL; cur++) {
     print_pstree_tree(*cur);
-    printf("|\n---");
+    printf("|---");
   }
   printf("\n");
 }
