@@ -230,7 +230,7 @@ static void fill_in_children(pstree_node_t *root,
     pstree_node_t *current_pstree_node = pstree_nodes[j];
     int cur_ppid = current_pstree_node->parent_pid;
     if (cur_ppid == root_pid) {
-      printf("[Debug] pid %d found parent %d", current_pstree_node->pid, cur_ppid);
+      printf("[Debug] pid %d found parent %d\n", current_pstree_node->pid, cur_ppid);
       root->children[i++] = current_pstree_node;
       fill_in_children(current_pstree_node, pstree_nodes, max_index);
     }
