@@ -138,7 +138,7 @@ static void print_pstree_nodes_list(pstree_node_t **pstree_nodes, int n_nodes) {
 }
 
 static void print_pstree_tree(pstree_node_t *root) {
-  printf("(pid %d) %s --- ", root->pid, root->name);
+  printf("(pid %d) --- ", root->pid);
   for(pstree_node_t **cur = root->children; *cur != NULL; cur++) {
     print_pstree_tree(*cur);
     printf("|---");
@@ -240,6 +240,7 @@ static void fill_in_children(pstree_node_t *root,
 
 static pstree_node_t *build_pstree(pstree_node_t **pstree_nodes, int max_index) {
   pstree_node_t *root = malloc(1 * sizeof(*root));
+  assert(root && "Failed to allocate memory to build pstree");
   strncpy(root->name, "root", sizeof("root") + 1);
   root->pid = 0;
   root->parent_pid = -1;
@@ -320,10 +321,32 @@ static void test_non_numbers_can_be_recognized() {
   assert(!string_is_number(s2, 10));
 }
 
+static pstree_node_t *form_pstree_node(int pid, int ppid){
+  pstree_node_t *node = malloc(1 * sizeof(*node));
+  assert(node && "OOM for node");
+  node->pid = pid;
+  node->parent_pid = ppid;
+  return node;
+}
+
+static void test_build_pstree(){
+  pstree_node_t *init = form_pstree_node(1, 0);
+  pstree_node_t *t1 = form_pstree_node(20, 1);
+  pstree_node_t *t11 = form_pstree_node(300, 20);
+  pstree_node_t *t12 = form_pstree_node(400, 20);
+  pstree_node_t *t2 = form_pstree_node(50, 1);
+
+  pstree_node_t *nodes[] = {init, t1, t11, t12, t2};
+  int max_index = 5;
+  pstree_node_t *tree = build_pstree(nodes, max_index);
+  print_pstree_tree(tree);
+}
+
 static void run_tests() {
   test_matched_ok();
   test_match_p_show_pid_ok();
   test_no_match_extra();
   test_numbers_can_be_recognized();
   test_non_numbers_can_be_recognized();
+  test_build_pstree();
 }
